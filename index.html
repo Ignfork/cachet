@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>cachet · the launchpad with cachet · $CACHET</title>
+<meta name="description" content="cachet: a Solana launchpad where every trade costs less and pays creators and traders more. Half of every fee to creators, rebates back to traders. $CACHET">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Pixelify+Sans:wght@500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' shape-rendering='crispEdges'%3E%3Crect width='16' height='16' rx='4' fill='%230e0f12'/%3E%3Cpath d='M5 4h7v2H6v4h6v2H5V11H4V5h1z' fill='%2386efac'/%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#0c0d10; --bg2:#121418; --panel:#16181d; --panel2:#1d2026; --line:#2a2e36; --line2:#363b45;
+  --fg:#f4f6f5; --muted:#a3a9b2; --dim:#6b717b;
+  --g:#86efac; --g2:#4ade80; --g3:#22c55e; --gdeep:#15803d; --gsoft:rgba(134,239,172,.12);
+  --w:#ffffff; --grey:#e7e9ec; --red:#ff6b6b;
+  --sans:"Inter",ui-sans-serif,system-ui,sans-serif; --px:"Pixelify Sans",ui-monospace,monospace; --mono:"JetBrains Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+html,body{margin:0;overflow-x:hidden}
+body{background:var(--bg);color:var(--fg);font:400 16px/1.6 var(--sans);-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+/* header */
+header{position:fixed;top:0;left:0;right:0;z-index:40;background:rgba(12,13,16,.72);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.06)}
+.hd{display:flex;align-items:center;gap:20px;max-width:1240px;margin:0 auto;padding:14px 22px}
+.logo canvas{height:22px;width:auto;display:block;image-rendering:pixelated}
+.hd nav{display:flex;gap:6px;margin:0 auto}
+.hd nav a{color:var(--muted);font-size:15px;padding:6px 12px;border-radius:10px}
+.hd nav a:hover{color:var(--fg);background:rgba(255,255,255,.05)}
+.xb{width:40px;height:40px;border-radius:12px;border:1px solid var(--line2);display:grid;place-items:center;color:var(--fg)}
+.xb:hover{border-color:var(--g)}
+.pbtn{display:inline-flex;align-items:center;gap:10px;border:0;border-radius:12px;background:var(--g);color:#06210f;padding:11px 18px;font:600 15px var(--px);letter-spacing:.02em;box-shadow:0 0 0 1px rgba(134,239,172,.3),0 10px 30px -10px rgba(134,239,172,.55);transition:transform .15s,box-shadow .15s;white-space:nowrap}
+.pbtn:hover{transform:translateY(-2px);box-shadow:0 0 0 1px rgba(134,239,172,.5),0 16px 40px -10px rgba(134,239,172,.75)}
+.pbtn.ghost{background:rgba(255,255,255,.03);color:var(--fg);box-shadow:0 0 0 1px var(--line2)}
+.pbtn.ghost:hover{box-shadow:0 0 0 1px var(--g)}
+.pbtn.lg{padding:15px 24px;font-size:17px;border-radius:14px}
+/* hero */
+.hero{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:110px 20px 70px;overflow:hidden;background:radial-gradient(ellipse at 50% 45%,rgba(134,239,172,.10),transparent 55%),var(--bg)}
+.vox{position:absolute;pointer-events:none;will-change:transform}
+.tagp{position:relative;display:inline-block;border:1px solid var(--line2);background:rgba(18,20,24,.7);color:var(--muted);font-size:14px;padding:6px 16px;border-radius:999px;backdrop-filter:blur(6px)}
+#word{position:relative;display:block;width:min(560px,82vw);height:auto;margin:38px auto 30px;cursor:pointer}
+.hero p.sub{position:relative;max-width:720px;margin:0 auto 34px;font-size:clamp(18px,2.2vw,22px);color:#d6dad8}
+.hero p.sub b{color:var(--g);font-weight:600}
+.hero .cta{position:relative;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.hstats{position:relative;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:34px}
+.hstats span{border:1px solid var(--line);background:rgba(18,20,24,.75);border-radius:12px;padding:8px 14px;font-size:13.5px;color:var(--muted);backdrop-filter:blur(6px)}
+.hstats b{color:var(--fg);font:600 14px var(--mono);margin-left:4px}
+.hstats b.g{color:var(--g)}
+/* marquee */
+.marq{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--bg2);overflow:hidden}
+.marq .tr{display:flex;width:max-content;gap:12px;padding:14px 0;animation:mq 40s linear infinite}
+.marq:hover .tr{animation-play-state:paused}
+@keyframes mq{to{transform:translateX(-50%)}}
+.mc{display:flex;align-items:center;gap:10px;padding:8px 14px;border:1px solid var(--line);border-radius:12px;background:var(--panel);font:600 14px var(--mono);white-space:nowrap}
+.mc canvas{width:24px;height:24px;border-radius:6px;image-rendering:pixelated}
+.mc .up{color:var(--g)}.mc .dn{color:var(--red)}.mc .mk{color:var(--muted);font-weight:500}
+/* sections */
+section.s{padding:110px 22px}
+.wrap{max-width:1120px;margin:0 auto}
+.sh{text-align:center;margin-bottom:40px}
+.sh .k{display:inline-block;font:600 14px var(--px);color:var(--g);letter-spacing:.06em;margin-bottom:12px}
+.sh h2{margin:0;font:700 clamp(34px,5vw,56px)/1.05 var(--px);letter-spacing:-.01em}
+.sh p{max-width:620px;margin:16px auto 0;color:var(--muted);font-size:17px}
+/* fees */
+.calc{background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:28px;box-shadow:0 40px 80px -40px rgba(0,0,0,.6)}
+.mode{display:flex;justify-content:center;gap:4px;margin:0 auto 22px;width:max-content;background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:4px}
+.mode button{border:0;background:none;color:var(--muted);border-radius:9px;padding:8px 16px;font:600 14px var(--px)}
+.mode button.on{background:var(--g);color:#06210f}
+.vol{margin-bottom:24px}
+.vol label{display:flex;justify-content:space-between;align-items:baseline;color:var(--muted);font-size:14.5px;margin-bottom:12px}
+.vol label b{font:700 30px var(--mono);color:var(--fg)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:8px;border-radius:99px;background:linear-gradient(90deg,var(--g) var(--p,30%),var(--line2) var(--p,30%));outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:8px;background:var(--w);border:4px solid var(--g2);box-shadow:0 0 0 6px rgba(134,239,172,.18);cursor:grab}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:8px;background:#fff;border:4px solid var(--g2);cursor:grab}
+.presets{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.presets button{border:1px solid var(--line2);background:var(--bg2);color:var(--muted);border-radius:8px;padding:4px 10px;font:600 12.5px var(--mono)}
+.presets button:hover{border-color:var(--g);color:var(--g)}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.fc{border:1px solid var(--line);border-radius:18px;padding:22px;background:var(--bg2);position:relative;overflow:hidden}
+.fc.us{border-color:rgba(134,239,172,.55);background:linear-gradient(160deg,rgba(134,239,172,.10),rgba(18,20,24,1) 60%)}
+.fc .nm{display:flex;align-items:center;justify-content:space-between;font:700 18px var(--px)}
+.fc .nm span{font:500 13px var(--mono);color:var(--muted)}
+.fc .nm input{width:62px;background:var(--panel2);border:1px solid var(--line2);border-radius:8px;padding:3px 6px;font:600 13px var(--mono);color:var(--fg);text-align:right}
+.fc .tot{font:700 42px var(--mono);margin:16px 0 0;letter-spacing:-.02em}
+.fc .tl{color:var(--muted);font-size:13.5px;margin-bottom:16px}
+.stack{display:flex;height:14px;border-radius:99px;overflow:hidden;background:var(--line);margin-bottom:14px}
+.stack i{display:block;height:100%;transition:width .35s}
+.row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-top:1px solid var(--line);font-size:15px}
+.row span{display:flex;align-items:center;gap:8px;color:#cfd3d8}
+.row span i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.row b{font:600 15px var(--mono)}
+.save{margin-top:20px;text-align:center;font-size:18px;color:#d6dad8;padding:16px;border-radius:14px;background:var(--gsoft);border:1px solid rgba(134,239,172,.3)}
+.save b{color:var(--g);font-family:var(--mono)}
+.fnote{margin:14px 0 0;text-align:center;color:var(--dim);font-size:12.5px}
+/* trending (light section for contrast) */
+.light{background:linear-gradient(180deg,#f3f5f4,#e9ecea);color:#0f1512}
+.light .sh .k{color:var(--gdeep)}
+.light .sh p{color:#5b6460}
+.tbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:18px}
+.tbar .sp{flex:1}
+.chips{display:flex;gap:4px;background:#fff;border:1px solid #d9dedb;border-radius:12px;padding:4px}
+.chips button{border:0;background:none;border-radius:9px;padding:7px 12px;font:600 14px var(--px);color:#5b6460}
+.chips button.on{background:#0f1512;color:var(--g)}
+.srch{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #d9dedb;border-radius:12px;padding:8px 12px;min-width:220px}
+.srch input{border:0;outline:none;background:none;width:100%;color:#0f1512}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.cc{background:#fff;border:1px solid #dfe3e1;border-radius:20px;padding:18px;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.cc:hover{transform:translateY(-4px);box-shadow:0 22px 40px -22px rgba(15,21,18,.35)}
+.cc .top{display:flex;align-items:center;gap:12px}
+.cc canvas{width:48px;height:48px;border-radius:14px;image-rendering:pixelated;flex:none}
+.cc .nm{flex:1;min-width:0}
+.cc .nm b{display:block;font:700 17px var(--sans)}
+.cc .nm span{font:500 13px var(--mono);color:#6b7570}
+.cc .ch{font:700 14px var(--mono);padding:4px 8px;border-radius:8px}
+.cc .ch.up{background:#dcfce7;color:#15803d}.cc .ch.dn{background:#fee2e2;color:#b91c1c}
+.cc .bc{margin:16px 0 12px}
+.cc .bc .l{display:flex;justify-content:space-between;font-size:13px;color:#6b7570;margin-bottom:6px}
+.cc .bc .l b{color:#0f1512;font-family:var(--mono)}
+.cc .bc .b{height:10px;border-radius:99px;background:#edf0ee;overflow:hidden}
+.cc .bc .b i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#4ade80,#22c55e);transition:width .6s}
+.cc .kv{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cc .kv div{background:#f4f6f5;border-radius:12px;padding:10px 12px}
+.cc .kv span{display:block;font-size:12px;color:#6b7570}
+.cc .kv b{font:700 16px var(--mono)}
+.cc .kv .ce b{color:#15803d}
+.samp{display:inline-block;font:600 12px var(--px);color:var(--gdeep);background:#dcfce7;border:1px solid #bbf7d0;border-radius:999px;padding:3px 10px}
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.st{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:26px;overflow:hidden}
+.st .n{width:52px;height:52px;border-radius:14px;display:grid;place-items:center;background:var(--g);color:#06210f;font:700 26px var(--px);margin-bottom:18px;box-shadow:0 0 30px -4px rgba(134,239,172,.6)}
+.st h3{margin:0 0 8px;font:700 28px var(--px)}
+.st p{margin:0;color:var(--muted)}
+.st canvas{position:absolute;right:-10px;bottom:-10px;width:120px;height:120px;opacity:.9;pointer-events:none}
+/* creator split band (green) */
+.band{background:var(--g);color:#06210f;padding:80px 22px}
+.band .wrap{display:grid;grid-template-columns:1.1fr 1fr;gap:40px;align-items:center}
+.band h2{margin:0 0 14px;font:700 clamp(34px,4.6vw,52px)/1.05 var(--px)}
+.band p{margin:0 0 22px;font-size:17px;color:#0d3a1d}
+.band .pbtn{background:#0c0d10;color:var(--g);box-shadow:none}
+.pie{display:flex;flex-direction:column;gap:10px}
+.pie div{display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.55);border:2px solid #0c0d10;border-radius:16px;padding:14px 18px;font-weight:600}
+.pie div b{font:700 34px var(--px);min-width:96px}
+.pie div span{font-size:15px}
+/* token + faq */
+.tok{display:grid;grid-template-columns:1.2fr 1fr;gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:26px}
+.ca{display:flex;align-items:center;border:1px solid var(--line2);border-radius:12px;background:var(--bg2);margin:16px 0}
+.ca b{flex:1;padding:12px 14px;font:600 13.5px var(--mono);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--g)}
+.ca button{border:0;border-left:1px solid var(--line2);background:none;color:var(--fg);padding:0 16px;font:600 13px var(--px);align-self:stretch}
+.faq .q{border-top:1px solid var(--line)}
+.faq .q:first-child{border-top:0}
+.faq .q button{width:100%;display:flex;justify-content:space-between;align-items:center;border:0;background:none;padding:16px 0;text-align:left;font:600 16px var(--sans)}
+.faq .q button i{font-style:normal;color:var(--g);font:700 20px var(--px);transition:transform .25s}
+.faq .q.open button i{transform:rotate(45deg)}
+.faq .q .a{max-height:0;overflow:hidden;transition:max-height .3s;color:var(--muted);font-size:15px}
+.faq .q.open .a{max-height:240px;padding-bottom:16px}
+footer{border-top:1px solid var(--line);padding:26px 22px 40px;color:var(--dim);font-size:13px}
+footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+footer .wrap canvas{height:18px;width:auto;image-rendering:pixelated}
+/* modal */
+.modal{position:fixed;inset:0;z-index:60;background:rgba(5,6,8,.72);display:none;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(4px)}
+.modal.on{display:flex}
+.mb{width:min(760px,100%);max-height:calc(100vh - 32px);overflow:auto;background:var(--panel);border:1px solid var(--line2);border-radius:24px;box-shadow:0 40px 80px -30px #000}
+.mh{display:flex;align-items:center;padding:18px 22px;border-bottom:1px solid var(--line);font:700 20px var(--px)}
+.mh button{margin-left:auto;border:1px solid var(--line2);background:var(--bg2);width:36px;height:36px;border-radius:10px}
+.mg{display:grid;grid-template-columns:1fr 260px;gap:20px;padding:22px}
+.f label{display:block;font:600 13px var(--px);color:var(--muted);margin:14px 0 6px;letter-spacing:.03em}
+.f label:first-child{margin-top:0}
+.f input,.f textarea{width:100%;background:var(--bg2);border:1px solid var(--line2);border-radius:12px;padding:11px 13px;outline:none;font-size:15px}
+.f input:focus,.f textarea:focus{border-color:var(--g);box-shadow:0 0 0 3px var(--gsoft)}
+.f textarea{min-height:76px;resize:vertical}
+.f .r2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.drop{display:flex;align-items:center;justify-content:center;gap:10px;border:1.5px dashed var(--line2);border-radius:12px;padding:14px;color:var(--muted);cursor:pointer;font-size:14px}
+.drop:hover{border-color:var(--g);color:var(--g)}
+.pv{background:#fff;color:#0f1512;border-radius:20px;padding:16px;align-self:start}
+.pv .img{width:100%;aspect-ratio:1;border-radius:14px;background:#edf0ee;overflow:hidden;display:grid;place-items:center;margin-bottom:12px}
+.pv .img img,.pv .img canvas{width:100%;height:100%;object-fit:cover;image-rendering:pixelated}
+.pv b{display:block;font:700 18px var(--sans)}
+.pv span{font:500 13px var(--mono);color:#6b7570}
+.pv p{font-size:13.5px;color:#4b544f;margin:8px 0 12px}
+.pv .b{height:10px;border-radius:99px;background:#edf0ee;overflow:hidden}
+.pv .b i{display:block;height:100%;width:2%;background:linear-gradient(90deg,#4ade80,#22c55e)}
+.mnote{margin:0 22px 22px;padding:12px 14px;border-radius:12px;background:var(--gsoft);border:1px solid rgba(134,239,172,.3);font-size:13.5px;color:#cfe9d7}
+#toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,16px);opacity:0;z-index:90;background:var(--g);color:#06210f;padding:12px 18px;border-radius:12px;font:600 14px var(--px);transition:.25s;pointer-events:none;max-width:calc(100% - 32px);text-align:center;box-shadow:0 20px 40px -14px rgba(134,239,172,.6)}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+.rv{opacity:0;transform:translateY(20px);transition:opacity .7s,transform .7s}
+.rv.in{opacity:1;transform:none}
+@media (max-width:900px){.hd nav{display:none}.duo,.tok,.band .wrap,.mg{grid-template-columns:1fr}.grid{grid-template-columns:1fr 1fr}.steps{grid-template-columns:1fr}}
+@media (max-width:560px){.hd{padding:12px 14px;gap:10px}.hd .pbtn{padding:9px 12px;font-size:13.5px}.grid{grid-template-columns:1fr}section.s{padding:80px 16px}.calc{padding:18px}.fc .tot{font-size:34px}.srch{min-width:0;flex:1}.f .r2{grid-template-columns:1fr}.pie div b{font-size:28px;min-width:76px}}
+</style>
+</head>
+<body>
+<header><div class="hd">
+  <a class="logo" href="#top" aria-label="cachet home"><canvas id="logoC"></canvas></a>
+  <nav><a href="#fees">Fees</a><a href="#trending">Trending</a><a href="#how">How it works</a><a href="#token">$CACHET</a></nav>
+  <a class="xb" id="xTop" href="#" target="_blank" rel="noopener noreferrer" aria-label="X"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7.2 8.2L23 22h-6.6l-5.2-6.8L5.3 22H2.2l7.7-8.8L1.8 2h6.8l4.7 6.2L18.9 2Zm-1.2 18h1.7L7.4 3.9H5.6L17.7 20Z"/></svg></a>
+  <button class="pbtn" type="button" data-launch>launch a coin</button>
+</div></header>
+
+<main id="top">
+<section class="hero" id="hero">
+  <span class="tagp">The launchpad with cachet</span>
+  <canvas id="word" width="560" height="130" aria-label="cachet, in glowing pixel letters"></canvas>
+  <p class="sub">Every trade here costs less and pays more back. <b>Half of every fee goes to creators</b>, and traders earn rebates on every trade.</p>
+  <div class="cta"><a class="pbtn lg" href="#trending">start trading →</a><a class="pbtn ghost lg" href="#fees">see the fees</a></div>
+  <div class="hstats"><span>fee per trade <b class="g">0.6%</b></span><span>to creators <b>50%</b></span><span>back to traders <b>33%</b></span><span>presale <b>none</b></span></div>
+</section>
+<div class="marq" aria-hidden="true"><div class="tr" id="marq"></div></div>
+
+<section class="s" id="fees"><div class="wrap rv">
+  <div class="sh"><span class="k">the fees, side by side</span><h2>Less taken.<br>More given back.</h2><p>Drag to set your daily trading volume. Same coin, same curve. Switch to creator mode to see what a coin pays the person who launched it.</p></div>
+  <div class="calc">
+    <div class="mode" id="mode"><button type="button" class="on" data-m="trader">I trade</button><button type="button" data-m="creator">I launch</button></div>
+    <div class="vol"><label for="vol"><span id="volL">Your daily trading volume</span><b id="volV">$5,000</b></label><input type="range" id="vol" min="0" max="1000" value="500" aria-label="Daily volume"><div class="presets" id="presets"></div></div>
+    <div class="duo">
+      <div class="fc"><div class="nm">typical launchpad <span><input id="theirFee" type="number" step="0.05" min="0" max="5" value="1.25" aria-label="Comparison fee percent">% / trade</span></div><div class="tot" id="tTot">$62.50</div><div class="tl">total fees paid</div><div class="stack" id="tStack"></div><div id="tRows"></div></div>
+      <div class="fc us"><div class="nm">cachet <span>0.6% / trade</span></div><div class="tot" id="uTot" style="color:var(--g)">$30.00</div><div class="tl">total fees paid</div><div class="stack" id="uStack"></div><div id="uRows"></div></div>
+    </div>
+    <div class="save" id="save"></div>
+    <p class="fnote">The comparison fee is editable. Set it to whatever the launchpad you use charges today. cachet's split is planned and confirmed at launch.</p>
+  </div>
+</div></section>
+
+<section class="s light" id="trending"><div class="wrap rv">
+  <div class="sh"><span class="k">trending right now</span><h2>Building a community<br>actually pays.</h2><p>Every coin shows what its creator has earned so far. <span class="samp">sample coins</span></p></div>
+  <div class="tbar"><div class="chips" id="sort"><button type="button" class="on" data-s="mc">market cap</button><button type="button" data-s="bc">bonding curve</button><button type="button" data-s="earn">creator earned</button><button type="button" data-s="new">newest</button></div><span class="sp"></span><label class="srch">🔍<input id="q" placeholder="search coins" aria-label="Search coins"></label></div>
+  <div class="grid" id="grid"></div>
+</div></section>
+
+<section class="s" id="how"><div class="wrap rv">
+  <div class="sh"><span class="k">three steps to cachet</span><h2>Launch. Trade. Earn.</h2></div>
+  <div class="steps">
+    <div class="st"><div class="n">1</div><h3>launch</h3><p>Name it, drop an image, and your coin goes live on a fair bonding curve. No presale, no team allocation.</p><canvas class="svox" data-shape="pill" width="240" height="240"></canvas></div>
+    <div class="st"><div class="n">2</div><h3>trade</h3><p>Buy and sell from the first block at less than half the usual fee. Every trade earns you a rebate.</p><canvas class="svox" data-shape="plus" width="240" height="240"></canvas></div>
+    <div class="st"><div class="n">3</div><h3>earn</h3><p>Creators collect half of every fee, forever. Traders claim their share straight to their wallet.</p><canvas class="svox" data-shape="coin" width="240" height="240"></canvas></div>
+  </div>
+</div></section>
+
+<section class="band"><div class="wrap rv">
+  <div><h2>Where every 0.6% goes.</h2><p>No hidden cut. Each trade's fee is split three ways the moment it happens, on chain.</p><button class="pbtn lg" type="button" data-launch>launch a coin →</button></div>
+  <div class="pie"><div><b>0.30%</b><span>to the coin's creator, forever</span></div><div><b>0.20%</b><span>back to the trader as a rebate</span></div><div><b>0.10%</b><span>keeps cachet running</span></div></div>
+</div></section>
+
+<section class="s" id="token"><div class="wrap rv">
+  <div class="sh"><span class="k">$CACHET</span><h2>The token with cachet.</h2></div>
+  <div class="tok">
+    <div class="card"><p style="margin:0;color:var(--muted);font-size:16px">$CACHET is the cachet platform token. The 0.1% platform share is planned to fund buybacks of $CACHET and the launchpad itself.</p>
+      <div class="ca"><b id="caT">contract posted on X at launch</b><button type="button" id="caCopy">copy</button></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap"><a class="pbtn" id="buyA" href="#">buy $CACHET</a><a class="pbtn ghost" id="xA" href="#" target="_blank" rel="noopener noreferrer">follow on X</a></div></div>
+    <div class="card faq" id="faq"></div>
+  </div>
+</div></section>
+</main>
+<footer><div class="wrap"><canvas id="logoF"></canvas><span>cachet · $CACHET · <a id="xFoot" href="#" target="_blank" rel="noopener noreferrer" style="color:var(--g)">X ↗</a></span></div><div class="wrap" style="margin-top:14px;display:block">cachet is an independent project and is not affiliated with pump.fun. cachet is pre-launch: coins, prices and creator earnings on this page are samples, the fee split is planned, and launching opens with $CACHET. Memecoins are extremely risky. Nothing here is financial advice.</div></footer>
+
+<div class="modal" id="launchM"><div class="mb">
+  <div class="mh">launch a coin<button type="button" data-close aria-label="Close">✕</button></div>
+  <div class="mg">
+    <div class="f">
+      <div class="r2"><div><label for="lN">name</label><input id="lN" maxlength="24" value="Glow Pill"></div><div><label for="lT">ticker</label><input id="lT" maxlength="10" value="GPILL"></div></div>
+      <label for="lD">description</label><textarea id="lD" maxlength="200">A little green pill with a lot of cachet.</textarea>
+      <label>image</label><label class="drop" for="lI">⬆ drop an image or click to choose<input id="lI" type="file" accept="image/*" hidden></label>
+      <div class="r2"><div><label for="lB">first buy (SOL)</label><input id="lB" type="number" step="0.1" min="0" value="0.5"></div><div><label for="lX">X link</label><input id="lX" placeholder="https://x.com/..."></div></div>
+    </div>
+    <div class="pv"><div class="img" id="pvImg"></div><b id="pvN">Glow Pill</b><span id="pvT">$GPILL</span><p id="pvD"></p><div style="display:flex;justify-content:space-between;font-size:12.5px;color:#6b7570;margin-bottom:6px"><span>bonding curve</span><b id="pvBc" style="font:700 13px var(--mono);display:inline;color:#0f1512">2%</b></div><div class="b"><i id="pvBar"></i></div></div>
+  </div>
+  <div class="mnote">No presale, no team allocation. Your wallet signs the launch and your first buy in one go. Launching opens when $CACHET goes live; for now this is a preview.</div>
+  <div style="display:flex;gap:10px;padding:0 22px 22px"><button class="pbtn" type="button" id="lGo">launch preview →</button><button class="pbtn ghost" type="button" data-close>cancel</button></div>
+</div></div>
+<div id="toast"></div>
+
+<script>
+(function(){
+'use strict';
+/* ================= CONFIG ================= */
+var CONFIG={xUrl:'https://x.com/CachetDotFun',xHandle:'@CachetDotFun',ca:'',buyUrl:''};
+/* ========================================== */
+function $(s){return document.querySelector(s)}
+function $$(s){return Array.prototype.slice.call(document.querySelectorAll(s))}
+var tt;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(function(){t.classList.remove('show')},2800)}
+function srand(s){return function(){s=(s*1664525+1013904223)>>>0;return s/4294967296}}
+function money(v){return '$'+(v>=1000?Math.round(v).toLocaleString():v.toFixed(2))}
+function kfmt(v){return v>=1e6?'$'+(v/1e6).toFixed(2)+'M':v>=1e3?'$'+(v/1e3).toFixed(1)+'K':'$'+v.toFixed(0)}
+var REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ================= PIXEL WORDMARK ================= */
+var LG={c:'00000,00000,01111,10000,10000,10000,01111',a:'00000,00000,01110,00001,01111,10001,01111',h:'10000,10000,11110,10001,10001,10001,10001',e:'00000,00000,01110,10001,11111,10000,01111',t:'01000,01000,11110,01000,01000,01001,00110'};
+function wordCells(w){var out=[];for(var i=0;i<w.length;i++){var g=LG[w[i]].split(',');for(var r=0;r<7;r++)for(var c=0;c<5;c++)if(g[r][c]==='1')out.push([i*6+c,r])}return out}
+var CELLS=wordCells('cachet');
+function drawMark(cv,h,col){var u=Math.max(1,Math.round(h/7)),W=(6*6-1)*u;cv.width=W;cv.height=7*u;var x=cv.getContext('2d');x.fillStyle=col;CELLS.forEach(function(c){x.fillRect(c[0]*u,c[1]*u,u,u)})}
+drawMark($('#logoC'),21,'#f4f6f5');drawMark($('#logoF'),14,'#86efac');
+// hero word: beveled voxel pixels with glow + hover wave
+var wc=$('#word'),wx=wc.getContext('2d'),hov=-1,burst=0;
+function word(t){var W=wc.width,H=wc.height,u=Math.floor(Math.min(W/35,H/7.6)),ox=(W-35*u)/2,oy=(H-7*u)/2;wx.clearRect(0,0,W,H);
+  CELLS.forEach(function(c,i){var col=c[0],wave=REDUCE?0:Math.sin(t*.003-col*.35)*1.5,lift=(hov>=0?Math.max(0,1-Math.abs(col-hov)/4)*-6:0)+(burst>0?Math.sin(i*1.7)*burst*8:0);var X=ox+c[0]*u,Y=oy+c[1]*u+wave+lift;
+    wx.save();wx.shadowColor='rgba(134,239,172,.75)';wx.shadowBlur=u*1.4;wx.fillStyle='#e9fff0';wx.fillRect(X,Y,u-1,u-1);wx.restore();
+    wx.fillStyle='rgba(255,255,255,.9)';wx.fillRect(X,Y,u-1,Math.max(1,u*.18));wx.fillStyle='rgba(34,197,94,.45)';wx.fillRect(X,Y+u*.78,u-1,u*.22-1)});
+  if(burst>0)burst-=.03}
+wc.addEventListener('pointermove',function(e){var r=wc.getBoundingClientRect(),u=r.width/35;hov=(e.clientX-r.left)/u});wc.addEventListener('pointerleave',function(){hov=-1});wc.addEventListener('click',function(){burst=1});
+
+/* ================= VOXEL RENDERER ================= */
+function shape(type){var v=[],i,j,k;
+  if(type==='plus'){for(i=-3;i<=3;i++)for(k=0;k<2;k++){v.push([i,0,k,0]);v.push([i,1,k,0]);if(Math.abs(i)>1){v.push([0,i,k,0]);v.push([1,i,k,0])}}for(i=-1;i<=1;i++)for(k=0;k<2;k++){if(i){v.push([0,i,k,0]);v.push([1,i,k,0])}}}
+  else if(type==='torus'){var R=5,r=2.2;for(i=-8;i<=8;i++)for(j=-8;j<=8;j++)for(k=-3;k<=3;k++){var d=Math.hypot(i,j)-R;if(d*d+k*k<=r*r)v.push([i,j,k,0])}}
+  else if(type==='pill'){for(i=-7;i<=7;i++)for(j=-3;j<=3;j++)for(k=-3;k<=3;k++){var cx=Math.max(-4,Math.min(4,i));if((i-cx)*(i-cx)+j*j+k*k<=10.5)v.push([i,j,k,i>0?1:0])}}
+  else if(type==='coin'){for(i=-6;i<=6;i++)for(j=-6;j<=6;j++){var d2=i*i+j*j;if(d2<=38){for(k=0;k<2;k++)v.push([i,j,k,d2>26?2:0]);if(d2<=26&&((i>=-2&&i<=2&&(j===-3||j===0||j===3))||(i===-2&&j>=-3&&j<=0)||(i===2&&j>=0&&j<=3)||(i===0&&(j===-4||j===4))))v.push([i,j,-1,3])}}}
+  else if(type==='moon'){for(i=-6;i<=6;i++)for(j=-6;j<=6;j++)for(k=-6;k<=6;k++){if(i*i+j*j+k*k<=30&&((i-2.6)*(i-2.6)+(j+1.6)*(j+1.6)+(k+2)*(k+2))>22)v.push([i,j,k,0])}}
+  return v}
+var PALS={0:[134,239,172],1:[248,250,249],2:[74,222,128],3:[21,128,61]};
+function makeVox(cv,type,opt){opt=opt||{};var vox=shape(type),x=cv.getContext('2d'),W=cv.width,H=cv.height;
+  var mx=0,my=0,mz=0;vox.forEach(function(v){mx+=v[0];my+=v[1];mz+=v[2]});mx/=vox.length;my/=vox.length;mz/=vox.length;vox=vox.map(function(v){return [v[0]-mx,v[1]-my,v[2]-mz,v[3]]});
+  var ext=0;vox.forEach(function(v){ext=Math.max(ext,Math.hypot(v[0],v[1],v[2]))});var S=Math.min(W,H)/(2*(ext+1.4));
+  var L=[-.45,-.6,.66],ln=Math.hypot(L[0],L[1],L[2]);L=L.map(function(a){return a/ln});
+  var st={ax:opt.ax||.4,ay:opt.ay||0,az:opt.az||0,sx:opt.sx==null?.0005:opt.sx,sy:opt.sy==null?.0009:opt.sy,par:{x:0,y:0}};
+  function draw(t){var ax=st.ax+t*st.sx+st.par.y,ay=st.ay+t*st.sy+st.par.x,az=st.az;var ca=Math.cos(ax),sa=Math.sin(ax),cb=Math.cos(ay),sb=Math.sin(ay),cc=Math.cos(az),sc=Math.sin(az);
+    function rot(p){var x1=p[0]*cc-p[1]*sc,y1=p[0]*sc+p[1]*cc,z1=p[2];var x2=x1*cb+z1*sb,z2=-x1*sb+z1*cb;var y3=y1*ca-z2*sa,z3=y1*sa+z2*ca;return [x2,y3,z3]}
+    var ex=rot([.5,0,0]),ey=rot([0,.5,0]),ez=rot([0,0,.5]);
+    var faces=[];[[ex,ey,ez],[[-ex[0],-ex[1],-ex[2]],ey,ez],[ey,ex,ez],[[-ey[0],-ey[1],-ey[2]],ex,ez],[ez,ex,ey],[[-ez[0],-ez[1],-ez[2]],ex,ey]].forEach(function(f){var n=f[0];if(n[2]<0){var len=Math.hypot(n[0],n[1],n[2]);var sh=Math.max(0,-(n[0]*L[0]+n[1]*L[1]+n[2]*L[2])/len);faces.push({n:n,a:f[1],b:f[2],l:.42+.68*Math.max(sh,(-(n[0]*L[0]+n[1]*L[1])/len)*.5+.25)})}});
+    var pts=vox.map(function(v){var p=rot(v);return [p[0],p[1],p[2],v[3]]});pts.sort(function(a,b){return b[2]-a[2]});
+    x.clearRect(0,0,W,H);var cx=W/2,cy=H/2;
+    pts.forEach(function(p){var base=PALS[p[3]];faces.forEach(function(f){var n=f.n,a=f.a,b=f.b,ox=p[0]+n[0],oy=p[1]+n[1];var k=f.l;x.fillStyle='rgb('+Math.min(255,base[0]*k|0)+','+Math.min(255,base[1]*k|0)+','+Math.min(255,base[2]*k|0)+')';x.beginPath();x.moveTo(cx+(ox+a[0]+b[0])*S,cy+(oy+a[1]+b[1])*S);x.lineTo(cx+(ox+a[0]-b[0])*S,cy+(oy+a[1]-b[1])*S);x.lineTo(cx+(ox-a[0]-b[0])*S,cy+(oy-a[1]-b[1])*S);x.lineTo(cx+(ox-a[0]+b[0])*S,cy+(oy-a[1]+b[1])*S);x.closePath();x.fill();x.strokeStyle='rgba(0,0,0,.08)';x.lineWidth=.6;x.stroke()})})}
+  return {draw:draw,st:st}}
+// hero floaters
+var hero=$('#hero'),FLO=[];
+[['torus',-.04,.06,300,6,{ax:1,sx:.0003,sy:.0006}],['plus',.18,.10,120,0,{ax:.5}],['plus',.66,.07,90,0,{ax:.3,sy:-.001}],['moon',.86,.10,260,7,{}],['pill',.18,.78,150,0,{az:.6,sy:.0012}],['coin',.66,.80,130,0,{ax:.2,sx:.0002,sy:.0014}],['torus',.04,.80,170,5,{}],['pill',.86,.80,200,4,{az:-.5}],['plus',.50,.92,70,2,{ax:.8}]].forEach(function(o){var c=document.createElement('canvas');c.className='vox';var dpr=Math.min(2,devicePixelRatio||1);c.width=c.height=Math.round(o[3]*dpr);c.style.width=c.style.height=o[3]+'px';c.style.left='calc('+(o[1]*100)+'% - '+o[3]/2+'px)';c.style.top='calc('+(o[2]*100)+'% - '+o[3]/2+'px)';if(o[4])c.style.filter='blur('+o[4]+'px)';c.style.opacity=o[4]?.55:1;hero.insertBefore(c,hero.firstChild);var v=makeVox(c,o[0],o[5]);FLO.push({c:c,v:v,depth:o[4]?.4:1,bob:Math.random()*6})});
+var mxp=0,myp=0;addEventListener('pointermove',function(e){mxp=e.clientX/innerWidth-.5;myp=e.clientY/innerHeight-.5});
+var heroVis=true;if('IntersectionObserver' in window)new IntersectionObserver(function(e){heroVis=e[0].isIntersecting}).observe(hero);
+// step mini voxels
+var SV=$$('.svox').map(function(c){return {c:c,v:makeVox(c,c.getAttribute('data-shape'),{ax:.5,sy:.0012}),vis:false}});
+if('IntersectionObserver' in window){var sio=new IntersectionObserver(function(es){es.forEach(function(e){SV.forEach(function(s){if(s.c===e.target)s.vis=e.isIntersecting})})});SV.forEach(function(s){sio.observe(s.c)})}
+function frame(t){if(heroVis){word(t);FLO.forEach(function(f){f.v.st.par.x=mxp*.8*f.depth;f.v.st.par.y=myp*.6*f.depth;f.v.draw(REDUCE?0:t);var dy=Math.sin(t*.0012+f.bob)*10*f.depth,dx=mxp*-30*f.depth;f.c.style.transform='translate('+dx.toFixed(1)+'px,'+dy.toFixed(1)+'px)'})}
+  SV.forEach(function(s){if(s.vis)s.v.draw(REDUCE?0:t)});requestAnimationFrame(frame)}
+requestAnimationFrame(frame);
+
+/* ================= COINS (sample) ================= */
+var COINS=[['Glow Pill','GPILL',842000,38.4,92,4210,3],['Halo Frog','HALO',512300,21.7,74,2380,9],['Mint Dog','MINT',301900,-4.2,58,1495,14],['Pixel Moon','PXMN',266400,12.9,49,1102,22],['Grass Toucher','GRASS',188800,66.1,37,940,31],['Clover Cat','CLVR',97200,8.3,21,410,40],['Lime Bean','LIME',64100,-1.8,14,262,55],['Jade Goblin','JADE',41900,19.5,9,170,62],['Sprout','SPRT',22800,4.4,5,88,74]].map(function(c,i){return {n:c[0],t:c[1],mc:c[2],ch:c[3],bc:c[4],earn:c[5],age:c[6],i:i}});
+function avatar(i,size){var c=document.createElement('canvas');c.width=c.height=8;var x=c.getContext('2d'),R=srand(i*977+5),bgs=['#86efac','#f4f6f5','#4ade80','#1d2026','#bbf7d0','#22c55e'],bg=bgs[i%bgs.length],fg=bg==='#1d2026'?'#86efac':'#0c0d10';x.fillStyle=bg;x.fillRect(0,0,8,8);for(var y=1;y<7;y++)for(var xx=1;xx<4;xx++)if(R()<.55){x.fillStyle=R()<.8?fg:'#ffffff';x.fillRect(xx,y,1,1);x.fillRect(7-xx,y,1,1)}return c}
+(function(){var M=$('#marq'),h=document.createDocumentFragment();for(var k=0;k<2;k++)COINS.forEach(function(c){var d=document.createElement('span');d.className='mc';d.appendChild(avatar(c.i));d.insertAdjacentHTML('beforeend','$'+c.t+' <span class="mk">'+kfmt(c.mc)+'</span> <span class="'+(c.ch>=0?'up':'dn')+'">'+(c.ch>=0?'+':'')+c.ch.toFixed(1)+'%</span>');h.appendChild(d)});M.appendChild(h)})();
+var SORT='mc';
+function grid(){var G=$('#grid'),q=$('#q').value.trim().toLowerCase();G.innerHTML='';var list=COINS.filter(function(c){return !q||c.n.toLowerCase().indexOf(q)>=0||c.t.toLowerCase().indexOf(q)>=0});list.sort(function(a,b){return SORT==='new'?a.age-b.age:b[SORT]-a[SORT]});
+  if(!list.length){G.innerHTML='<p style="grid-column:1/-1;text-align:center;color:#6b7570">No coins match. Launch the first one.</p>';return}
+  list.forEach(function(c){var d=document.createElement('div');d.className='cc';var top=document.createElement('div');top.className='top';top.appendChild(avatar(c.i));top.insertAdjacentHTML('beforeend','<div class="nm"><b>'+c.n+'</b><span>$'+c.t+' · '+c.age+'m</span></div><span class="ch '+(c.ch>=0?'up':'dn')+'">'+(c.ch>=0?'+':'')+c.ch.toFixed(1)+'%</span>');d.appendChild(top);
+    d.insertAdjacentHTML('beforeend','<div class="bc"><div class="l"><span>bonding curve</span><b>'+c.bc+'%</b></div><div class="b"><i style="width:0"></i></div></div><div class="kv"><div><span>market cap</span><b>'+kfmt(c.mc)+'</b></div><div class="ce"><span>creator earned</span><b>'+money(c.earn)+'</b></div></div>');
+    d.addEventListener('click',function(){toast('Trading opens when $CACHET launches. These are sample coins.')});G.appendChild(d);requestAnimationFrame(function(){d.querySelector('.b i').style.width=c.bc+'%'})})}
+$$('#sort button').forEach(function(b){b.addEventListener('click',function(){SORT=b.getAttribute('data-s');$$('#sort button').forEach(function(z){z.classList.toggle('on',z===b)});grid()})});
+$('#q').addEventListener('input',grid);grid();
+
+/* ================= FEE CALCULATOR ================= */
+var MODE='trader',US={total:.006,creator:.003,you:.002,plat:.001};
+function volFrom(v){return Math.round(Math.pow(10,2+v/1000*3)/10)*10}
+function toSlider(vol){return Math.round((Math.log10(vol)-2)/3*1000)}
+(function(){var P=$('#presets');[500,5000,25000,100000].forEach(function(v){var b=document.createElement('button');b.type='button';b.textContent=kfmt(v);b.addEventListener('click',function(){$('#vol').value=toSlider(v);calc()});P.appendChild(b)})})();
+function rows(el,stack,items,total){var S=$(stack),R=$(el);S.innerHTML='';R.innerHTML='';items.forEach(function(it){var w=total>0?it[1]/total*100:0;S.insertAdjacentHTML('beforeend','<i style="width:'+w+'%;background:'+it[2]+'"></i>');R.insertAdjacentHTML('beforeend','<div class="row"><span><i style="background:'+it[2]+'"></i>'+it[0]+'</span><b style="color:'+(it[3]||'inherit')+'">'+money(it[1])+'</b></div>')})}
+function calc(){var sv=+$('#vol').value,vol=volFrom(sv);$('#vol').style.setProperty('--p',(sv/10)+'%');$('#volV').textContent=money(vol);
+  var tf=Math.max(0,+$('#theirFee').value||0)/100,tCreator=Math.min(tf,.0005),tTot=vol*tf,uTot=vol*US.total;
+  $('#tTot').textContent=money(tTot);$('#uTot').textContent=money(uTot);
+  rows('#tRows','#tStack',[['to creators',vol*tCreator,'#a3a9b2'],['back to you',0,'#6b717b'],['kept by platform',tTot-vol*tCreator,'#ff6b6b','#ff8a8a']],tTot);
+  rows('#uRows','#uStack',[['to creators',vol*US.creator,'#86efac','#86efac'],['back to you',vol*US.you,'#f4f6f5'],['kept by platform',vol*US.plat,'#4b5563']],uTot);
+  var S=$('#save');if(MODE==='trader'){$('#volL').textContent='Your daily trading volume';var keep=(tTot-uTot)+vol*US.you;S.innerHTML=keep>0?'You keep <b>'+money(keep)+'</b> more per day, that’s <b>'+money(keep*365)+'</b> a year.':'Set a comparison fee above cachet’s 0.6% to see the difference.'}
+  else{$('#volL').textContent='Your coin’s daily trading volume';var c1=vol*US.creator,c0=vol*tCreator;S.innerHTML='As the creator you earn <b>'+money(c1)+'</b> a day on cachet, <b>'+money(c1*30)+'</b> a month'+(c1>c0?', that’s <b>'+(c0>0?Math.round(c1/c0)+'×':'way')+'</b> more than '+money(c0)+' elsewhere.':'.')}}
+$('#vol').value=toSlider(5000);$('#vol').addEventListener('input',calc);$('#theirFee').addEventListener('input',calc);
+$$('#mode button').forEach(function(b){b.addEventListener('click',function(){MODE=b.getAttribute('data-m');$$('#mode button').forEach(function(z){z.classList.toggle('on',z===b)});calc()})});
+calc();
+
+/* ================= LAUNCH MODAL ================= */
+var IMG=null;
+function pv(){$('#pvN').textContent=$('#lN').value||'my coin';$('#pvT').textContent='$'+($('#lT').value||'TICKER').toUpperCase();$('#pvD').textContent=$('#lD').value;var buy=+$('#lB').value||0,bc=Math.min(100,Math.max(1,buy/85*100+1));$('#pvBc').textContent=bc.toFixed(1)+'%';$('#pvBar').style.width=bc+'%';
+  var box=$('#pvImg');box.innerHTML='';if(IMG){var im=document.createElement('img');im.src=IMG;im.alt='';box.appendChild(im)}else box.appendChild(avatar(($('#lT').value||'x').length*7+3))}
+['#lN','#lT','#lD','#lB'].forEach(function(s){$(s).addEventListener('input',pv)});
+$('#lI').addEventListener('change',function(){var f=this.files[0];if(!f)return;if(f.size>5e6){toast('Image is over 5 MB.');return}var r=new FileReader();r.onload=function(){IMG=r.result;pv()};r.readAsDataURL(f)});
+$$('[data-launch]').forEach(function(b){b.addEventListener('click',function(){pv();$('#launchM').classList.add('on')})});
+$$('[data-close]').forEach(function(b){b.addEventListener('click',function(){$('#launchM').classList.remove('on')})});
+$('#launchM').addEventListener('click',function(e){if(e.target===this)this.classList.remove('on')});addEventListener('keydown',function(e){if(e.key==='Escape')$('#launchM').classList.remove('on')});
+$('#lGo').addEventListener('click',function(){toast('Preview: $'+($('#lT').value||'TICKER').toUpperCase()+' with a '+(+$('#lB').value||0)+' SOL first buy. Launching opens with $CACHET.')});
+
+/* ================= FAQ / LINKS ================= */
+var FAQ=[['What is cachet?','A Solana launchpad. Coins launch on a fair bonding curve with no presale or team allocation, and every trade costs 0.6%.'],['Where does the 0.6% go?','0.30% to the coin’s creator, 0.20% back to the trader as a rebate, and 0.10% to the platform. The split is planned and confirmed at launch.'],['How do traders get rebates?','Rebates build up on every trade and are claimed straight to your wallet.'],['Is it live?','Not yet. Coins and numbers on this page are samples. The $CACHET contract address will only be posted on our X.']];
+(function(){var F=$('#faq');FAQ.forEach(function(q,i){var d=document.createElement('div');d.className='q'+(i===0?' open':'');d.innerHTML='<button type="button">'+q[0]+'<i>+</i></button><div class="a">'+q[1]+'</div>';d.querySelector('button').addEventListener('click',function(){d.classList.toggle('open')});F.appendChild(d)})})();
+function wire(a,url,msg){if(!a)return;if(url){a.href=url;a.target='_blank';a.rel='noopener noreferrer'}else{a.removeAttribute('target');a.addEventListener('click',function(e){e.preventDefault();toast(msg)})}}
+['#xTop','#xA','#xFoot'].forEach(function(s){wire($(s),CONFIG.xUrl,'Our X drops soon. The launch is posted there.')});wire($('#buyA'),CONFIG.buyUrl,'$CACHET launches soon. The contract is posted on X.');
+if(CONFIG.ca)$('#caT').textContent=CONFIG.ca;
+$('#caCopy').addEventListener('click',function(){if(!CONFIG.ca){toast('Not posted yet. Watch our X.');return}try{navigator.clipboard.writeText(CONFIG.ca);toast('Copied')}catch(e){toast(CONFIG.ca)}});
+if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.08});$$('.rv').forEach(function(el){io.observe(el)})}else $$('.rv').forEach(function(el){el.classList.add('in')});
+})();
+</script>
+</body>
+</html>
